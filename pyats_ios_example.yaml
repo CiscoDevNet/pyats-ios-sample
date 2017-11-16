@@ -1,0 +1,58 @@
+testbed:
+  name: pyATS_IOS_Example_Testbed
+devices:
+  ios1:
+    connections:
+      defaults:
+        class: 'unicon.Unicon'
+      a: 
+        protocol: telnet
+        ip: localhost
+        port: 11023
+    passwords: 
+      enable: lab
+      line: lab
+      tacacs: lab
+    tacacs: 
+      username: lab
+    type: ios
+  ios2:
+    connections:
+      defaults:
+        class: 'unicon.Unicon'
+      a: 
+        protocol: telnet
+        ip: localhost
+        port: 11024
+    passwords: 
+      enable: lab
+      line: lab
+      tacacs: lab
+    tacacs: 
+      username: lab
+    type: ios
+topology:
+  ios1:
+    interfaces:
+      FastEthernet0/0: 
+        ipv4: 10.10.10.1/24
+        ipv6: '10:10:10::1/64'
+        link: n1
+        type: ethernet
+      Loopback0: 
+        ipv4: 192.168.0.1/32
+        ipv6: '192::1/128'
+        link: ios1_Loopback0
+        type: loopback
+  ios2:
+    interfaces:
+      FastEthernet0/0: 
+        ipv4: 10.10.10.2/24
+        ipv6: '10:10:10::2/64'
+        link: n1
+        type: ethernet
+      Loopback0: 
+        ipv4: 192.168.0.2/32
+        ipv6: '192::2/128'
+        link: ios2_Loopback0
+        type: loopback
