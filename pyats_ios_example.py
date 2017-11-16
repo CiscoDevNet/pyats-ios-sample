@@ -19,6 +19,30 @@ Topology:
     |             | ------------------------------------ |             |
     +-------------+          Eth0/1 <-> Eth0/1           +-------------+
 
+Testing:
+    This script performs the following tests for demonstration purposes.
+
+    - router connection: basic device connection test
+
+    - `ping` command: basic device ping test; logs ping result.
+
+    - interface count verification
+
+        - execute `show version` command: basic command execution and data
+                                          parsing; extract ethernet and serial
+                                          interface counts; logs interface
+                                          counts.
+
+        - execute `show ip interface brief` command: basic command execution and
+                                                     data parsing; extract all
+                                                     ethernet and serial
+                                                     interfaces; logs number of
+                                                     interface counts.
+
+        - verify ethernet and serial interface counts from above commands.
+
+    - router disconnect: basic device disconnect test
+
 Examples:
     # to run under standalone execution
     bash$ python pyats_ios_example.py --testbed pyats_ios_example.yaml
