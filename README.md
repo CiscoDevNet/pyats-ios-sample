@@ -1,5 +1,40 @@
 # pyats-ios-sample
-Here’s a full test script in pyATS with local libraries that connects to a
+
+
+# Workflow
+
+Create a virtualenv and install dependencies
+
+```
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Make sure virl cli is configured
+
+```
+export VIRL_HOST=myvirlserver.change.me
+```
+
+Launch the provided topology in your enviornment
+```
+git clone https://github.com/kecorbin/pyats-ios-sample
+cd pyats-ios-sample
+virl up
+```
+
+Launch pyATS test suite
+
+```
+make test
+```
+
+
+
+# pyATS details
+
+This repo contains a full test script in pyATS with local libraries that connects to a
 testbed of IOS devices, and runs various test cases that parses command outputs,
 collects router information, and report them in log.
 
@@ -17,11 +52,11 @@ Arguments:
 
 Topology:
 
-    +-------------+          Eth0/0 <-> Eth0/0           +-------------+
-    |             | ------------------------------------ |             |
-    |    ios1     |                                      |    ios2     |
-    |             | ------------------------------------ |             |
-    +-------------+          Eth0/1 <-> Eth0/1           +-------------+
+    +-------------+                                      +-------------+
+    |             |                                      |             |
+    |    ios1     | ------------------------------------ |    ios2     |
+    |             |          Gig0/1 <-> Gig0/1           |             |
+    +-------------+                                      +-------------+
 
 Testing:
     This script performs the following tests for demonstration purposes.
