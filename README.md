@@ -1,5 +1,9 @@
 # pyats-ios-sample
 
+# Introduction
+
+This repo provides a demonstration of Cisco pyATS with a NetDevOps style workflow.
+
 # Requirements
 
 * Python 2.7
