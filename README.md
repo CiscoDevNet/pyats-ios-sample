@@ -3,26 +3,43 @@
 
 # Workflow
 
-Create a virtualenv and install dependencies
-
-```
-virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-Make sure virl cli is configured
+### Make sure virl cli is configured
 
 ```
 export VIRL_HOST=myvirlserver.change.me
 ```
 
-Launch the provided topology in your enviornment
+### Clone this repo / create virtualenv / install requirements
+
 ```
 git clone https://github.com/kecorbin/pyats-ios-sample
 cd pyats-ios-sample
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+```
+
+### Launch topology
+
+```
 virl up
 ```
+It may take a minute to boot the nodes, make sure that you allow enough time for
+the topology to boot
+
+
+### Generate pyATS testbed inventory
+
+The virlutils package provides us an easy way of dynamically generating a testbed
+definition with the accurate connectivity information for the simulation. 
+
+```
+virl generate pyats
+```
+
+
+### Verify
 
 Launch pyATS test suite
 
