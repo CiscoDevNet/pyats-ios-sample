@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<topology xmlns="http://www.cisco.com/VIRL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="0.95" xsi:schemaLocation="http://www.cisco.com/VIRL https://raw.github.com/CiscoVIRL/schema/v0.95/virl.xsd">
+    <extensions><entry key="AutoNetkit.external_port" type="String">10002</entry></extensions>
+    <node name="ios1" type="SIMPLE" subtype="IOSv" location="306,111">
+        <extensions><entry key="config" type="String">!
+!
+hostname ios1
+!
+interface GigabitEthernet0/1
+ ip address 10.10.10.1 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+ no shutdown
+!
+end</entry></extensions><interface id="0" name="GigabitEthernet0/1"/>
+    </node>
+    <node name="ios2" type="SIMPLE" subtype="IOSv" location="474,107">
+        <extensions><entry key="config" type="String">!
+!
+hostname ios2
+!
+interface GigabitEthernet0/1
+ ip address 10.10.10.2 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+ no shutdown
+!
+end</entry></extensions><interface id="0" name="GigabitEthernet0/1"/>
+    </node>
+    <annotations/>
+    <connection dst="/virl:topology/virl:node[2]/virl:interface[1]" src="/virl:topology/virl:node[1]/virl:interface[1]"/>
+</topology>
