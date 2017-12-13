@@ -86,9 +86,9 @@ class common_setup(aetest.CommonSetup):
     '''
 
     @aetest.subsection
-    def check_topology(self, 
-                       testbed, 
-                       ios1_name = 'ios1', 
+    def check_topology(self,
+                       testbed,
+                       ios1_name = 'ios1',
                        ios2_name = 'ios2'):
         '''
         check that we have at least two devices and a link between the devices
@@ -116,7 +116,6 @@ class common_setup(aetest.CommonSetup):
 
         # get corresponding links
         links = ios1.find_links(ios2)
-
         assert len(links) >= 1, 'require one link between ios1 and ios2'
 
 
@@ -142,8 +141,8 @@ class common_setup(aetest.CommonSetup):
         '''
         mark the VerifyInterfaceCountTestcase for looping.
         '''
-
-        devices = list(testbed.devices.keys())
+        # ignore VIRL lxc's
+        devices = [d for d in testbed.devices.keys() if 'mgmt' not in d]
 
         logger.info(banner('Looping VerifyInterfaceCountTestcase'
                            ' for {}'.format(devices)))
@@ -169,11 +168,11 @@ class PingTestcase(aetest.Testcase):
         Sample of ping command result:
 
         ping
-        Protocol [ip]: 
+        Protocol [ip]:
         Target IP address: 10.10.10.2
-        Repeat count [5]: 
-        Datagram size [100]: 
-        Timeout in seconds [2]: 
+        Repeat count [5]:
+        Datagram size [100]:
+        Timeout in seconds [2]:
         Extended commands [n]: n
         Sweep range of sizes [n]: n
         Type escape sequence to abort.
@@ -224,20 +223,32 @@ class VerifyInterfaceCountTestcase(aetest.Testcase):
         Sample of show version command result:
 
         show version
-        Cisco IOS Software [Everest], Linux Software (X86_64BI_LINUX)
-        Copyright (c) 1986-2017 by Cisco Systems, Inc.
+        Cisco IOS Software, IOSv Software (VIOS-ADVENTERPRISEK9-M), Version 15.6(2)T, RELEASE SOFTWARE (fc2)
+        Technical Support: http://www.cisco.com/techsupport
+        Copyright (c) 1986-2016 by Cisco Systems, Inc.
+        Compiled Tue 22-Mar-16 16:19 by prod_rel_team
 
-        ROM: Bootstrap program is Linux
 
-        ios1 uptime is 18 hours, 26 minutes
+        ROM: Bootstrap program is IOSv
+
+        ios2 uptime is 1 hour, 17 minutes
+        System returned to ROM by reload
+        System image file is "flash0:/vios-adventerprisek9-m"
         Last reload reason: Unknown reason
 
+        <....>
 
-        Linux Unix (i686) processor with 294840K bytes of memory.
-        Processor board ID 987654321
-        8 Ethernet interfaces
-        8 Serial interfaces
-        64K bytes of NVRAM.
+        Cisco IOSv (revision 1.0) with  with 484609K/37888K bytes of memory.
+        Processor board ID 9QTSICFAZS7Q2I61N8WNZ
+        2 Gigabit Ethernet interfaces
+        DRAM configuration is 72 bits wide with parity disabled.
+        256K bytes of non-volatile configuration memory.
+        2097152K bytes of ATA System CompactFlash 0 (Read/Write)
+        0K bytes of ATA CompactFlash 1 (Read/Write)
+        0K bytes of ATA CompactFlash 2 (Read/Write)
+        10080K bytes of ATA CompactFlash 3 (Read/Write)
+
+
 
         Configuration register is 0x0
 
@@ -255,22 +266,19 @@ class VerifyInterfaceCountTestcase(aetest.Testcase):
                         goto = ['exit'])
         else:
             # extract interfaces counts from `show version`
-            match = re.search(r'(?P<ethernet>\d+) Ethernet interfaces\r\n' 
-                               '(?P<serial>\d+) Serial interfaces\r\n', result)
+            match = re.search(r'(?P<ethernet>\d+) Gigabit Ethernet interfaces\r\n', result)
             ethernet_intf_count = int(match.group('ethernet'))
-            serial_intf_count = int(match.group('serial'))
-
             # log the interface counts
             logger.info(banner('\'show version\' returns {} ethernet interfaces'
-                               ' and {} serial interfaces'.format(
-                                            ethernet_intf_count,
-                                            serial_intf_count,
+                                            .format(
+                                            ethernet_intf_count
+
                                         )
                                )
                         )
             # add them to testcase parameters
             self.parameters.update(ethernet_intf_count = ethernet_intf_count,
-                                   serial_intf_count = serial_intf_count)
+                                   serial_intf_count = 0)
 
     @aetest.test
     def verify_interface_count(self,
@@ -283,24 +291,9 @@ class VerifyInterfaceCountTestcase(aetest.Testcase):
         Sample of show ip interface brief command result:
 
         show ip interface brief
-        Interface              IP-Address      OK? Method Status    Protocol
-        Ethernet0/0            10.10.10.1      YES manual up        up      
-        Ethernet0/1            unassigned      YES manual down      down    
-        Ethernet0/2            unassigned      YES manual down      down    
-        Ethernet0/3            unassigned      YES manual down      down    
-        Ethernet1/0            unassigned      YES manual down      down    
-        Ethernet1/1            unassigned      YES manual down      down    
-        Ethernet1/2            unassigned      YES manual down      down    
-        Ethernet1/3            unassigned      YES manual down      down    
-        Serial2/0              unassigned      YES manual down      down    
-        Serial2/1              unassigned      YES manual down      down    
-        Serial2/2              unassigned      YES manual down      down    
-        Serial2/3              unassigned      YES manual down      down    
-        Serial3/0              unassigned      YES manual down      down    
-        Serial3/1              unassigned      YES manual down      down    
-        Serial3/2              unassigned      YES manual down      down    
-        Serial3/3              unassigned      YES manual down      down    
-
+        Interface                  IP-Address      OK? Method Status                Protocol
+        GigabitEthernet0/0         unassigned      YES unset  administratively down down
+        GigabitEthernet0/1         10.10.10.2      YES manual up                    up
         '''
 
         try:
@@ -316,7 +309,7 @@ class VerifyInterfaceCountTestcase(aetest.Testcase):
                         goto = ['exit'])
         else:
             # extract ethernet interfaces
-            ethernet_interfaces = re.finditer(r'\r\nEthernet\d+/\d+\s+', result)
+            ethernet_interfaces = re.finditer(r'\r\nGigabitEthernet\d+/\d+\s+', result)
             # total number of ethernet interface
             len_ethernet_interfaces = len(tuple(ethernet_interfaces))
 
@@ -328,18 +321,7 @@ class VerifyInterfaceCountTestcase(aetest.Testcase):
             # `show ip interface brief` and `show version`
             assert len_ethernet_interfaces == ethernet_intf_count
 
-            # extract serial interfaces
-            serial_interfaces = re.finditer(r'\r\nSerial\d+/\d+\s+', result)
-            # total number of serial interface
-            len_serial_interfaces = len(tuple(serial_interfaces))
 
-            # log the serial interface counts
-            logger.info(banner('\'show ip interface brief\' returns {} serial'
-                               ' interfaces'.format(len_serial_interfaces)))
-
-            # compare the serial interface count between
-            # `show ip interface brief` and `show version`
-            assert len_serial_interfaces == serial_intf_count
 
 class common_cleanup(aetest.CommonCleanup):
     '''disconnect from ios routers'''
