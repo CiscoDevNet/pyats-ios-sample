@@ -166,7 +166,7 @@ class PingTestcase(aetest.Testcase):
     @aetest.setup
     def setup(self, uut_link):
         destination = []
-        for intf in uut_link.interfaces.values():
+        for intf in uut_link.interfaces:
             destination.append(str(intf.ipv4.ip))
 
         # apply loop to next section
