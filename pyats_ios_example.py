@@ -118,6 +118,9 @@ class common_setup(aetest.CommonSetup):
         links = ios1.find_links(ios2)
         assert len(links) >= 1, 'require one link between ios1 and ios2'
 
+        # save link as uut link parameter
+        self.parent.parameters['uut_link'] = links.pop()
+
 
     @aetest.subsection
     def establish_connections(self, steps, ios1, ios2):
@@ -160,7 +163,17 @@ class PingTestcase(aetest.Testcase):
 
     groups = ('basic', 'looping')
 
-    @aetest.test.loop(destination = ('10.10.10.1', '10.10.10.2'))
+    @aetest.setup
+    def setup(self, uut_link):
+        destination = []
+        for intf in uut_link.interfaces:
+            destination.append(str(intf.ipv4.ip))
+
+        # apply loop to next section
+        aetest.loop.mark(self.ping, destination = destination)
+
+
+    @aetest.test
     def ping(self, device, destination):
         '''
         ping destination ip address from device
