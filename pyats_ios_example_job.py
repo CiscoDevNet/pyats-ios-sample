@@ -52,7 +52,7 @@ def main():
     args, unknown = parser.parse_known_args()
 
     # configure your log outputs level
-    logging.getLogger('ats.connections').setLevel('DEBUG')
+    #logging.getLogger('ats.connections').setLevel('DEBUG')
 
     # Find the location of the script in relation to the job file
     test_path = os.path.dirname(os.path.abspath(__file__))
