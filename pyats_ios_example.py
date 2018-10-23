@@ -13,11 +13,11 @@ Arguments:
 
 Topology:
 
-    +-------------+          Eth0/0 <-> Eth0/0           +-------------+
+    +-------------+          GigabitEthernet0/1          +-------------+
     |             | ------------------------------------ |             |
     |    ios1     |                                      |    ios2     |
-    |             | ------------------------------------ |             |
-    +-------------+          Eth0/1 <-> Eth0/1           +-------------+
+    |             |                                      |             |
+    +-------------+                                      +-------------+
 
 Testing:
     This script performs the following tests for demonstration purposes.
@@ -34,10 +34,7 @@ Testing:
                                           counts.
 
         - execute `show ip interface brief` command: basic command execution and
-                                                     data parsing; extract all
-                                                     ethernet and serial
-                                                     interfaces; logs number of
-                                                     interface counts.
+                                                     data parsing;
 
         - verify ethernet and serial interface counts from above commands.
 
@@ -114,12 +111,21 @@ class common_setup(aetest.CommonSetup):
         # add them to testscript parameters
         self.parent.parameters.update(ios1 = ios1, ios2 = ios2)
 
-        # get corresponding links
+        # verify at least one interface between two devices
         links = ios1.find_links(ios2)
         assert len(links) >= 1, 'require one link between ios1 and ios2'
 
-        # save link as uut link parameter
-        self.parent.parameters['uut_link'] = links.pop()
+        # Select an Interface by Name, for use cases like new link turnup,
+        # this could also be provided as an argument to a script
+        link = ios1.interfaces['GigabitEthernet0/1']
+
+        # the parameters here are fairly arbitary, but are useful for
+        # passing some data between tests, so that additional things
+        # can be done.g IP lookup / ping / counters
+        self.parent.parameters['uut_link'] = link
+
+        # let someone know
+        logger.info("Using UUT Link: {}".format(link))
 
 
     @aetest.subsection
@@ -166,12 +172,12 @@ class PingTestcase(aetest.Testcase):
     @aetest.setup
     def setup(self, uut_link):
         destination = []
-        for intf in uut_link.interfaces:
-            destination.append(str(intf.ipv4.ip))
 
-        # apply loop to next section
-        aetest.loop.mark(self.ping, destination = destination)
+        # get the IP address of the link being tested
+        destination.append(str(uut_link.ipv4.ip))
 
+        # apply loop to next section `ping destination from these/all devices`
+        aetest.loop.mark(self.ping, destination=destination)
 
     @aetest.test
     def ping(self, device, destination):

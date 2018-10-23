@@ -2,11 +2,13 @@
 
 # Introduction
 
-This repo provides a demonstration of Cisco pyATS with a NetDevOps style workflow.
+This repo contains a full test script in pyATS with local libraries that connects to a
+testbed of IOS devices, and runs various test cases that parses command outputs,
+collects router information, and report them in log.
 
 # Requirements
 
-* Python 2.7
+* Python 3.x
 * Docker
 
 # Workflow
@@ -20,7 +22,7 @@ export VIRL_HOST=myvirlserver.change.me
 ### Clone this repo / create virtualenv / install requirements
 
 ```
-git clone https://github.com/kecorbin/pyats-ios-sample
+git clone https://github.com/CiscoDevNet/pyats-ios-sample
 cd pyats-ios-sample
 virtualenv venv
 source venv/bin/activate
@@ -76,7 +78,31 @@ virl generate pyats
 ```
 
 
-### Verify
+#### Testbed Credentials
+
+The generated testbed will look to the execution environment to provide credentials, make
+sure these are set in either your local environment, or docker container.
+
+```
+tacacs:
+    username: "%ENV{PYATS_USERNAME}"
+passwords:
+    tacacs: "%ENV{PYATS_PASSWORD}"
+    enable: "%ENV{PYATS_AUTH_PASS}"
+    line: "%ENV{PYATS_PASSWORD}"
+
+```
+
+You can set these like such
+
+
+```
+export PYATS_USERNAME=cisco
+export PYATS_PASSWORD=cisco
+export PYATS_AUTH_PASS=cisco
+```
+
+### Test Cases
 
 Launch pyATS test suite
 
@@ -128,11 +154,7 @@ make test
 
 ```
 
-# pyATS details
 
-This repo contains a full test script in pyATS with local libraries that connects to a
-testbed of IOS devices, and runs various test cases that parses command outputs,
-collects router information, and report them in log.
 
 ## General Information
 
@@ -163,6 +185,8 @@ demonstration purposes.
     |    ios1     | ------------------------------------ |    ios2     |
     |             |          Gig0/1 <-> Gig0/1           |             |
     +-------------+                                      +-------------+
+
+```
 
 ## Testing
 

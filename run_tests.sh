@@ -1,1 +1,1 @@
-easypy /tests/pyats_ios_example_job.py -testbed_file /tests/default_testbed.yaml -archive_dir=/tests/.pyATS
+easypy pyats_ios_example_job.py -testbed_file default_testbed.yaml -archive_dir=./.pyATS
