@@ -144,7 +144,7 @@ class common_setup(aetest.CommonSetup):
         '''
         mark the VerifyInterfaceCountTestcase for looping.
         '''
-        # ignore VIRL lxc's
+        # ignore CML terminal_server
         devices = [d for d in testbed.devices.keys() if 'terminal_server' not in d]
 
         logger.info(banner('Looping VerifyInterfaceCountTestcase'
