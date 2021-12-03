@@ -164,7 +164,7 @@ class PingTestcase(aetest.Testcase):
     groups = ('basic', 'looping')
 
     @aetest.setup
-    def setup(self, device, uut_link):
+    def setup(self, uut_link):
         destination = []
         # To get the link interfaces ip
         for intf in uut_link.interfaces:
