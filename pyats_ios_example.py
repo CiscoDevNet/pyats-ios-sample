@@ -144,8 +144,8 @@ class common_setup(aetest.CommonSetup):
         '''
         mark the VerifyInterfaceCountTestcase for looping.
         '''
-        # ignore VIRL lxc's
-        devices = [d for d in testbed.devices.keys() if 'mgmt' not in d]
+        # ignore CML terminal_server
+        devices = [d for d in testbed.devices.keys() if 'terminal_server' not in d]
 
         logger.info(banner('Looping VerifyInterfaceCountTestcase'
                            ' for {}'.format(devices)))
@@ -166,8 +166,12 @@ class PingTestcase(aetest.Testcase):
     @aetest.setup
     def setup(self, uut_link):
         destination = []
+        # To get the link interfaces ip
         for intf in uut_link.interfaces:
-            destination.append(str(intf.ipv4.ip))
+            parsed_dict = self.parent.parameters[intf.device.name].\
+                          parse('show ip interface brief')
+            intf_ip = parsed_dict['interface'][intf.name]['ip_address']
+            destination.append(intf_ip)
 
         # apply loop to next section
         aetest.loop.mark(self.ping, destination = destination)
