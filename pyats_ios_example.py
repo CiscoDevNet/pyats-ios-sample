@@ -166,11 +166,12 @@ class PingTestcase(aetest.Testcase):
     @aetest.setup
     def setup(self, device, uut_link):
         destination = []
-        parsed_dict = self.parent.parameters[device].parse('show ip interface brief')
+        # To get the link interfaces ip
         for intf in uut_link.interfaces:
+            parsed_dict = self.parent.parameters[intf.device.name].\
+                          parse('show ip interface brief')
             intf_ip = parsed_dict['interface'][intf.name]['ip_address']
-            if intf_ip not in destination:
-               destination.append(intf_ip)
+            destination.append(intf_ip)
 
         # apply loop to next section
         aetest.loop.mark(self.ping, destination = destination)
